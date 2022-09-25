@@ -1,13 +1,18 @@
+# Sequence alignment slippage-aware program
+# by Theodoro Gasperin Terra Camargo 260842764
+# 
+# 
 # given substitution matrix M
 # given Slipage gap penalty and non slipage gap penalty
 
 
-#Let Xij be the score of the optimal allignment of sequences s1...si VS t1...tj
-#Global allignment means the best alignment of both full strings
+# Let Xij be the score of the optimal allignment of sequences s1...si VS t1...tj
+# Global allignment means the best alignment of both full strings
+import sys
 
+sys.setrecursionlimit(1500)
+#print(sys.getrecursionlimit())
 #------------------------------ Classes ----------------------------------------
-from codecs import utf_8_encode
-
 
 class Graph:
 
@@ -240,7 +245,6 @@ def compute_global_alignment(fasta_file, match_score, missmatches, slip_gap_pena
 
 
 #print(best_alignment_matrix(seq1, seq2))
-
 compute_global_alignment("test.fasta", 1, -1, -1, -2)
 
 
