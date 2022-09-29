@@ -1,17 +1,11 @@
 # Sequence alignment slippage-aware program
 # by Theodoro Gasperin Terra Camargo 260842764
-# 
-# 
-# given substitution matrix M
-# given Slipage gap penalty and non slipage gap penalty
 
-
-# Let Xij be the score of the optimal allignment of sequences s1...si VS t1...tj
-# Global allignment means the best alignment of both full strings
 import sys
 
-sys.setrecursionlimit(1500)
-#print(sys.getrecursionlimit())
+sys.setrecursionlimit(1500) # Extend recursion limit of system
+
+
 #------------------------------ Classes ----------------------------------------
 
 class Graph:
@@ -61,8 +55,8 @@ def best_alignment_matrix(S, T, match, missmatch, cs, cn):
     myGraph = Graph(S, T) 
     
     grid = []   # Xij Matrix of alignment scores
-    cn = -2     # cn equals cost of normal gap
-    cs = -1     # cs equals cost of slipage gap -> Not sure when to use this variable
+    #cn = -2     # cn equals cost of normal gap
+    #cs = -1     # cs equals cost of slipage gap -> Not sure when to use this variable
 
     i = 0
     while i < len(S) + 1:
@@ -98,14 +92,14 @@ def best_alignment_matrix(S, T, match, missmatch, cs, cn):
             elif i > 0 and j > 0 :
                 
                 case1 = grid[i-1][j-1] + calculate_score(S, T, i -1 , j -1, match, missmatch) # i - 1 and j -1 bcs I added a zero in front of the strings
-                #case2 = grid[i-1][j] + cn                                   # Create a function for chossing which c to use
-                #case3 = grid_line[j-1] + cn                                 # index i out of bounds for grid list bcs line not added yet to grid therefore grid_line used here
+                #case2 = grid[i-1][j] + cn                                   
+                #case3 = grid_line[j-1] + cn                                 
                 if S[i-1-1] == S[i -1]:# Slipage Case 2: S sequence has repeated bases Add "-" to T alignment
                     case2 = grid[i-1][j] + cs
                 else:
                     case2 = grid[i-1][j] + cn
-                if T[j-1-1] == T[j -1]:# Slipage Case 1: T sequence has repeated bases Add "-" to S alignment
-                    case3 = grid_line[j-1] + cs
+                if T[j-1-1] == T[j -1]:          # Slipage Case 1: T sequence has repeated bases Add "-" to S alignment
+                    case3 = grid_line[j-1] + cs  # index i out of bounds for grid list bcs line not added yet to grid therefore grid_line used here
                 else:
                     case3 = grid_line[j-1] + cn
 
@@ -114,7 +108,7 @@ def best_alignment_matrix(S, T, match, missmatch, cs, cn):
                 
                 # Adding Nodes to Graph:
                 if best_score == case1:
-                    parent_number = (i-1)*(len(T)+1) + j-1
+                    parent_number = (i-1)*(len(T)+1) + j-1 # Calculates parent number node 
                     myGraph.add_node(parent_number, i, j, best_score) # Diagonal
                     #print("c1 i:" + str(i) + " j: " + str(j) + " pNum: " + str(parent_number ))
                 elif best_score == case2:
@@ -131,11 +125,11 @@ def best_alignment_matrix(S, T, match, missmatch, cs, cn):
     
     
     aligment = print_alignment(myGraph.list_of_nodes, myGraph.list_of_nodes[-1], S, T, "", "")
-    #print_matrix(grid)
+    print_matrix(grid)
 
     print("\nOptimal Alignment Score: " + str(grid[len(grid)-1][len(grid[0])-1]) )
 
-    return "\nGlobal Alignment:\n"+ aligment
+    return "\nGlobal Alignment:\n" + aligment
 
 
 def print_alignment(node_list, node, S, T, aligment1, aligment2):
@@ -156,11 +150,11 @@ def print_alignment(node_list, node, S, T, aligment1, aligment2):
             aligment1 = aligment1 + S[node.i-1]
             aligment2 = aligment2 + T[node.j-1]
 
-        if next_node.i ==  node.i - 1 and next_node.j == node.j:     # Up   -> add nucleotide to alignment1
-            aligment1 = aligment1 + S[node.i-1]
+        if next_node.i ==  node.i - 1 and next_node.j == node.j:     # Up   -> add nucleotide to alignment1 and gap "-" to alig2
+            aligment1 = aligment1 + S[node.i-1]                         
             aligment2 = aligment2 + "-"
 
-        if next_node.i ==  node.i and next_node.j == node.j - 1:     # Left -> add nucleotide to alignment2
+        if next_node.i ==  node.i and next_node.j == node.j - 1:     # Left -> add nucleotide to alignment2 and gap "-" to alig1
             aligment1 = aligment1 + "-"
             aligment2 = aligment2 + T[node.j-1]
             
@@ -223,12 +217,16 @@ def compute_global_alignment(fasta_file, match_score, missmatches, slip_gap_pena
     # Extracting Nucleic Acid Sequences
     for line in fobj:
 
+        if line == "\n":
+            continue
         if ">" in line:
             sequences.insert(n_seq,"")
             continue  
         else:
             seq = sequences[n_seq]
             for i in line:
+                if i == "\n":
+                    continue
                 seq = seq + i
             
             sequences[n_seq] = seq  #Updating entry
@@ -240,12 +238,13 @@ def compute_global_alignment(fasta_file, match_score, missmatches, slip_gap_pena
 
 
 #--------------------- Main --------------------------
-#seq1 = "ATTAGT"
-#seq2 = "ATAAG"
+#seq2 = "CAPE"
+#seq1 = "APPLE"
 
+#print(best_alignment_matrix(seq1, seq2, 1, -1, -1, -2))
 
-#print(best_alignment_matrix(seq1, seq2))
-compute_global_alignment("test.fasta", 1, -1, -1, -2)
+compute_global_alignment("big_seq.fa", 1, -1, -1, -2)
+
 
 
 
