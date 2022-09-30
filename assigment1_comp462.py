@@ -2,9 +2,7 @@
 # by Theodoro Gasperin Terra Camargo 260842764
 
 import sys
-
 sys.setrecursionlimit(1500) # Extend recursion limit of system
-
 
 #------------------------------ Classes ----------------------------------------
 
@@ -33,10 +31,10 @@ class Graph:
 class Node:
 
     def __init__(self, n_parent, i, j, score):
-        self.n_parent = n_parent # Parent index in list of Nodes in the Graph object
-        self.i = i  # Index i at Xij
-        self.j = j  # Index j at Xij
-        self.score = score # Best allignment score
+        self.n_parent = n_parent    # Parent index in list of Nodes in the Graph object
+        self.i = i                  # Index i at Xij
+        self.j = j                  # Index j at Xij
+        self.score = score          # Best allignment score
     
     def print_node(self):
         print("Node: " + str(self.i) + " , " + str(self.j) + " , " + str(self.score))
@@ -53,10 +51,8 @@ def best_alignment_matrix(S, T, match, missmatch, cs, cn):
     
     # Creating graph object: 
     myGraph = Graph(S, T) 
-    
-    grid = []   # Xij Matrix of alignment scores
-    #cn = -2     # cn equals cost of normal gap
-    #cs = -1     # cs equals cost of slipage gap -> Not sure when to use this variable
+    # Xij Matrix of alignment scores:
+    grid = []   
 
     i = 0
     while i < len(S) + 1:
@@ -84,16 +80,18 @@ def best_alignment_matrix(S, T, match, missmatch, cs, cn):
                     best_score = grid[i-1][j] + cs
                 else:
                     best_score = grid[i-1][j] + cn
-                #best_score = i*cn
+                
                 grid_line.append(best_score)
                 myGraph.add_node(((i-1)*(len(T)+1)+ j), i, j, best_score)
 
             # All other cases
             elif i > 0 and j > 0 :
-                
+                #case1 -> diagonal 
+                #case2 -> up                                   
+                #case3 -> left
+
                 case1 = grid[i-1][j-1] + calculate_score(S, T, i -1 , j -1, match, missmatch) # i - 1 and j -1 bcs I added a zero in front of the strings
-                #case2 = grid[i-1][j] + cn                                   
-                #case3 = grid_line[j-1] + cn                                 
+                                                
                 if S[i-1-1] == S[i -1]:# Slipage Case 2: S sequence has repeated bases Add "-" to T alignment
                     case2 = grid[i-1][j] + cs
                 else:
@@ -110,15 +108,15 @@ def best_alignment_matrix(S, T, match, missmatch, cs, cn):
                 if best_score == case1:
                     parent_number = (i-1)*(len(T)+1) + j-1 # Calculates parent number node 
                     myGraph.add_node(parent_number, i, j, best_score) # Diagonal
-                    #print("c1 i:" + str(i) + " j: " + str(j) + " pNum: " + str(parent_number ))
+                    
                 elif best_score == case2:
                     parent_number = (((i-1)*(len(T)+1)) + j)
                     myGraph.add_node(parent_number , i, j, best_score) # Up
-                    #print("c2 i:" + str(i) + " j: " + str(j) + " pNum: " + str(parent_number ))
+                    
                 elif best_score == case3:
                     parent_number =    i*(len(T) + 1) + j - 1 
                     myGraph.add_node(parent_number, i, j, best_score) # Left             
-                    #print("c3 i:" + str(i) + " j: " + str(j) + " pNum: " + str(parent_number ))
+                    
             j +=1
         grid.append(grid_line)  # Appending line to matrix
         i +=1
@@ -137,8 +135,6 @@ def print_alignment(node_list, node, S, T, aligment1, aligment2):
     Given list of nodes, Strings S and T, 
     This function computes the global alignment of seq S and T
     '''
-    #print("parent number:" + str(node.n_parent))
-    #print("node score: " + str(node.score) + " i : " + str(node.i) + " j: " + str(node.j))
 
     if node.n_parent == None:
         result = "]" + aligment2 + "[\n]" + aligment1 + "["
@@ -162,7 +158,7 @@ def print_alignment(node_list, node, S, T, aligment1, aligment2):
 
 
 def calculate_score(S, T, i, j, match, missmatch):
-    '''Calculates pair Alignment Score, given index of both strings'''
+    '''Calculates pair Alignment Score of chars in S and T, given index of both strings'''
     
     #ACTG VS ACTG (M)
     #substitution_cost_matrix = [ 
