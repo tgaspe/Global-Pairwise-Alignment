@@ -123,7 +123,7 @@ def best_alignment_matrix(S, T, match, missmatch, cs, cn):
     
     
     aligment = print_alignment(myGraph.list_of_nodes, myGraph.list_of_nodes[-1], S, T, "", "")
-    print_matrix(grid)
+    #print_matrix(grid)
 
     print("\nOptimal Alignment Score: " + str(grid[len(grid)-1][len(grid[0])-1]) )
 
@@ -234,12 +234,11 @@ def compute_global_alignment(fasta_file, match_score, missmatches, slip_gap_pena
 
 
 #--------------------- Main --------------------------
-#seq2 = "CAPE"
-#seq1 = "APPLE"
-
-#print(best_alignment_matrix(seq1, seq2, 1, -1, -1, -2))
-
-compute_global_alignment("big_seq.fa", 1, -1, -1, -2)
+if __name__ == '__main__':
+    #seq2 = "CAPE"
+    #seq1 = "APPLE"
+    #print(best_alignment_matrix(seq1, seq2, 1, -1, -1, -2))
+    compute_global_alignment("big_seq.fa", 1, -1, -1, -2)
 
 
 
